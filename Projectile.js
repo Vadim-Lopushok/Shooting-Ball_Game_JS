@@ -27,7 +27,8 @@ let animationId;
 
 function animate() {
   animationId = requestAnimationFrame(animate);
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = 'rgba(0, 0, 0, 0.1)'
+  context.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   projectiles.forEach((projectile, index) => {
     projectile.update();
@@ -71,12 +72,12 @@ addEventListener('click', (event) => {
   const angle = Math.atan2(event.clientY - canvas.height / 2,
     event.clientX - canvas.width / 2);
   const velocity = {
-    x: Math.cos(angle),
-    y: Math.sin(angle),
+    x: Math.cos(angle) * 5,
+    y: Math.sin(angle) * 5,
   };
 
   projectiles.push(
-    new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
+    new Projectile(canvas.width / 2, canvas.height / 2, 5, 'white', velocity));
 });
 
 animate();

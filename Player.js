@@ -25,4 +25,4 @@ class Player {
   }
 }
 
-const player = new Player(x, y, 30, 'blue');
+const player = new Player(x, y, 10, 'white');
