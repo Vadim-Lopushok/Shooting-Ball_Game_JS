@@ -24,6 +24,8 @@ class Projectile {
 const projectiles = [];
 
 let animationId;
+const scoreEl = document.querySelector('#scoreEl');
+let score = 0;
 
 function animate() {
   animationId = requestAnimationFrame(animate);
@@ -76,7 +78,10 @@ function animate() {
               x: (Math.random() - 0.5) * (Math.random() * 6), y: (Math.random() - 0.5) * (Math.random() * 6),
             }));
         }
+        // this is where we shrink our enemy
         if (enemy.radius - 10 > 5) {
+          score += 100;
+          scoreEl.innerHTML = score;
           gsap.to(enemy, {
             radius: enemy.radius - 10,
           });
@@ -84,6 +89,9 @@ function animate() {
             projectiles.splice(projectileIndex, 1);
           }, 0);
         } else {
+          //remove enemy if they are too small
+          score += 150;
+          scoreEl.innerHTML = score;
           setTimeout(() => {
             enemies.splice(index, 1);
             projectiles.splice(projectileIndex, 1);
