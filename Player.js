@@ -26,4 +26,3 @@ class Player {
 }
 
 const player = new Player(x, y, 30, 'blue');
-player.draw();
