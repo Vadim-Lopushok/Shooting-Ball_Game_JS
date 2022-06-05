@@ -23,8 +23,10 @@ class Projectile {
 
 const projectiles = [];
 
+let animationId;
+
 function animate() {
-  requestAnimationFrame(animate);
+  animationId = requestAnimationFrame(animate);
   context.clearRect(0, 0, canvas.width, canvas.height);
   player.draw();
   projectiles.forEach(projectile => {
@@ -32,6 +34,14 @@ function animate() {
   });
   enemies.forEach((enemy, index) => {
     enemy.update();
+
+    const distance = Math.hypot(player.x - enemy.x,
+      player.y - enemy.y);
+
+    // End Game
+    if (distance - enemy.radius - player.radius < 1) {
+      cancelAnimationFrame(animationId);
+    }
 
     projectiles.forEach((projectile, projectileIndex) => {
       const distance = Math.hypot(projectile.x - enemy.x,
@@ -41,8 +51,8 @@ function animate() {
       if (distance - enemy.radius - projectile.radius < 1) {
         setTimeout(() => {
           enemies.splice(index, 1);
-          projectiles.splice(index, 1);
-        }, 0)
+          projectiles.splice(projectileIndex, 1);
+        }, 0);
       }
     });
   });
