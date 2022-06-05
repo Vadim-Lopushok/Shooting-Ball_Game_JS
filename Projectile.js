@@ -25,10 +25,13 @@ const projectiles = [];
 
 function animate() {
   requestAnimationFrame(animate);
-  context.clearRect(0, 0, canvas.width, canvas.height)
+  context.clearRect(0, 0, canvas.width, canvas.height);
   player.draw();
   projectiles.forEach(projectile => {
     projectile.update();
+  });
+  enemies.forEach(enemy => {
+    enemy.update();
   });
 }
 
@@ -37,8 +40,8 @@ addEventListener('click', (event) => {
       event.clientX - canvas.width / 2);
   const velocity = {
     x: Math.cos(angle),
-    y: Math.sin(angle)
-  }
+    y: Math.sin(angle),
+  };
 
   projectiles.push(
       new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
