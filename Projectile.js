@@ -30,21 +30,34 @@ function animate() {
   projectiles.forEach(projectile => {
     projectile.update();
   });
-  enemies.forEach(enemy => {
+  enemies.forEach((enemy, index) => {
     enemy.update();
+
+    projectiles.forEach((projectile, projectileIndex) => {
+      const distance = Math.hypot(projectile.x - enemy.x,
+        projectile.y - enemy.y);
+
+      // Object Touch
+      if (distance - enemy.radius - projectile.radius < 1) {
+        setTimeout(() => {
+          enemies.splice(index, 1);
+          projectiles.splice(index, 1);
+        }, 0)
+      }
+    });
   });
 }
 
 addEventListener('click', (event) => {
   const angle = Math.atan2(event.clientY - canvas.height / 2,
-      event.clientX - canvas.width / 2);
+    event.clientX - canvas.width / 2);
   const velocity = {
     x: Math.cos(angle),
     y: Math.sin(angle),
   };
 
   projectiles.push(
-      new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
+    new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
 });
 
 animate();
