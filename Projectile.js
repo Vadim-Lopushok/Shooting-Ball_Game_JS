@@ -27,15 +27,17 @@ let animationId;
 
 function animate() {
   animationId = requestAnimationFrame(animate);
-  context.fillStyle = 'rgba(0, 0, 0, 0.1)'
+  context.fillStyle = 'rgba(0, 0, 0, 0.1)';
   context.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   projectiles.forEach((projectile, index) => {
     projectile.update();
 
     // remove from edges of screen
-    if (projectile.x + projectile.radius < 0 || projectile.x - projectile.radius >
-      canvas.width || projectile.y + projectile.radius < 0 || projectile.y - projectile.radius >
+    if (projectile.x + projectile.radius < 0 || projectile.x -
+      projectile.radius >
+      canvas.width || projectile.y + projectile.radius < 0 || projectile.y -
+      projectile.radius >
       canvas.height) {
       setTimeout(() => {
         projectiles.splice(index, 1);
@@ -57,12 +59,21 @@ function animate() {
       const distance = Math.hypot(projectile.x - enemy.x,
         projectile.y - enemy.y);
 
-      // Object Touch
+      // When projectiles touch enemy
       if (distance - enemy.radius - projectile.radius < 1) {
-        setTimeout(() => {
-          enemies.splice(index, 1);
-          projectiles.splice(projectileIndex, 1);
-        }, 0);
+        if (enemy.radius - 10 > 5) {
+          gsap.to(enemy, {
+            radius: enemy.radius - 10
+          });
+          setTimeout(() => {
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        } else {
+          setTimeout(() => {
+            enemies.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        }
       }
     });
   });
