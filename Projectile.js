@@ -31,16 +31,20 @@ function animate() {
   animationId = requestAnimationFrame(animate);
   context.fillStyle = 'rgba(0, 0, 0, 0.1)';
   context.fillRect(0, 0, canvas.width, canvas.height);
+
   player.draw();
-  particles.forEach((particle, index) => {
+  for (let index = particles.length - 1; index >= 0; index--) {
+    const particle = particles[index];
     if (particle.alpha <= 0) {
       particles.splice(index, 1);
     } else {
       particle.update();
     }
     particle.update();
-  });
-  projectiles.forEach((projectile, index) => {
+  }
+
+  for (let index = projectiles.length - 1; index >= 0; index--) {
+    const projectile = projectiles[index];
     projectile.update();
 
     // remove from edges of screen
@@ -49,12 +53,13 @@ function animate() {
       canvas.width || projectile.y + projectile.radius < 0 || projectile.y -
       projectile.radius >
       canvas.height) {
-      setTimeout(() => {
-        projectiles.splice(index, 1);
-      }, 0);
+      projectiles.splice(index, 1);
     }
-  });
-  enemies.forEach((enemy, index) => {
+  }
+
+  for (let index = enemies.length - 1; index >= 0; index--) {
+    const enemy = enemies[index];
+
     enemy.update();
 
     const distance = Math.hypot(player.x - enemy.x,
@@ -65,7 +70,9 @@ function animate() {
       cancelAnimationFrame(animationId);
     }
 
-    projectiles.forEach((projectile, projectileIndex) => {
+    for (let projectileIndex = projectiles.length - 1; projectileIndex >=
+    0; projectileIndex--) {
+      const projectile = projectiles[projectileIndex];
       const distance = Math.hypot(projectile.x - enemy.x,
         projectile.y - enemy.y);
 
@@ -74,9 +81,11 @@ function animate() {
         // create explosions
         for (let i = 0; i < enemy.radius * 2; i++) {
           particles.push(
-            new Particle(projectile.x, projectile.y, Math.random() * 2, enemy.color, {
-              x: (Math.random() - 0.5) * (Math.random() * 6), y: (Math.random() - 0.5) * (Math.random() * 6),
-            }));
+            new Particle(projectile.x, projectile.y, Math.random() * 2,
+              enemy.color, {
+                x: (Math.random() - 0.5) * (Math.random() * 6),
+                y: (Math.random() - 0.5) * (Math.random() * 6),
+              }));
         }
         // this is where we shrink our enemy
         if (enemy.radius - 10 > 5) {
@@ -85,21 +94,17 @@ function animate() {
           gsap.to(enemy, {
             radius: enemy.radius - 10,
           });
-          setTimeout(() => {
-            projectiles.splice(projectileIndex, 1);
-          }, 0);
+          projectiles.splice(projectileIndex, 1);
         } else {
           //remove enemy if they are too small
           score += 150;
           scoreEl.innerHTML = score;
-          setTimeout(() => {
-            enemies.splice(index, 1);
-            projectiles.splice(projectileIndex, 1);
-          }, 0);
+          enemies.splice(index, 1);
+          projectiles.splice(projectileIndex, 1);
         }
       }
-    });
-  });
+    }
+  }
 }
 
 addEventListener('click', (event) => {
