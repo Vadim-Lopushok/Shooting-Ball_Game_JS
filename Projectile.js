@@ -25,6 +25,8 @@ const projectiles = [];
 
 let animationId;
 const scoreEl = document.querySelector('#scoreEl');
+const modalEl = document.querySelector('#modalEl');
+const modalScoreEl = document.querySelector('#modalScoreEl');
 let score = 0;
 
 function animate() {
@@ -68,6 +70,8 @@ function animate() {
     // End Game
     if (distance - enemy.radius - player.radius < 1) {
       cancelAnimationFrame(animationId);
+      modalEl.style.display = 'block';
+      modalScoreEl.innerHTML = score;
     }
 
     for (let projectileIndex = projectiles.length - 1; projectileIndex >=
