@@ -71,7 +71,17 @@ function animate() {
     if (distance - enemy.radius - player.radius < 1) {
       cancelAnimationFrame(animationId);
       clearInterval(intervalId);
+
       modalEl.style.display = 'block';
+      gsap.fromTo('#modalEl', {
+        scale: 0.8,
+        opacity: 0,
+      }, {
+        scale: 1,
+        opacity: 1,
+        ease: 'expo',
+      });
+
       modalScoreEl.innerHTML = score;
     }
 
@@ -119,6 +129,7 @@ function init() {
   particles = [];
   animationId;
   score = 0;
+  scoreEl.innerHTML = 0;
 }
 
 addEventListener('click', (event) => {
@@ -132,16 +143,33 @@ addEventListener('click', (event) => {
     new Projectile(canvas.width / 2, canvas.height / 2, 5, 'white', velocity));
 });
 
+// restart game
 buttonEl.addEventListener('click', () => {
   init();
   animate();
   spawnEnemies();
-  modalEl.style.display = 'none';
+  gsap.to('#modalEl', {
+    opacity: 0,
+    scale: 0.8,
+    duration: 0.2,
+    ease: 'expo.in',
+    oncomplete: () => {
+      modalEl.style.display = 'none';
+    },
+  });
 });
 
 startButtonEl.addEventListener('click', () => {
   init();
   animate();
   spawnEnemies();
-  startModalEl.style.display = 'none';
-})
+  gsap.to('#startModalEl', {
+    opacity: 0,
+    scale: 0.8,
+    duration: 0.2,
+    ease: 'expo.in',
+    oncomplete: () => {
+      startModalEl.style.display = 'none';
+    },
+  });
+});
