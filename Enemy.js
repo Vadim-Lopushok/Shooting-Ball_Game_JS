@@ -17,6 +17,10 @@ class Enemy {
 
       if (Math.random() < 0.5) {
         this.type = 'Spinninng';
+
+        if (Math.random() < 0.5) {
+          this.type = 'Homing Spinning';
+        }
       }
     }
   }
@@ -43,6 +47,18 @@ class Enemy {
       this.velocity.y = Math.sin(angle);
       this.x = this.x + this.velocity.x;
       this.y = this.y + this.velocity.y;
+    } else if (this.type === 'Homing Spinning') {
+      this.radians += 0.1;
+
+      const angle = Math.atan2(player.y - this.center.y, player.x - this.center.x);
+      this.velocity.x = Math.cos(angle);
+      this.velocity.y = Math.sin(angle);
+
+      this.center.x += this.velocity.x;
+      this.center.y += this.velocity.y;
+
+      this.x = this.center.x + Math.cos(this.radians) * 30;
+      this.y = this.center.y + Math.sin(this.radians) * 30;
     } else {
       // linear movement
       this.x = this.x + this.velocity.x;
