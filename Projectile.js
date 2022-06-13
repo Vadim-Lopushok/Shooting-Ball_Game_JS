@@ -28,6 +28,8 @@ const scoreEl = document.querySelector('#scoreEl');
 const modalEl = document.querySelector('#modalEl');
 const modalScoreEl = document.querySelector('#modalScoreEl');
 const buttonEl = document.querySelector('#buttonEl');
+const startButtonEl = document.querySelector('#startButtonEl');
+const startModalEl = document.querySelector('#startModalEl');
 let score = 0;
 
 function animate() {
@@ -135,6 +137,11 @@ buttonEl.addEventListener('click', () => {
   animate();
   spawnEnemies();
   modalEl.style.display = 'none';
-})
+});
 
-animate();
+startButtonEl.addEventListener('click', () => {
+  init();
+  animate();
+  spawnEnemies();
+  startModalEl.style.display = 'none';
+})
