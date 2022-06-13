@@ -129,7 +129,7 @@ function init() {
   particles = [];
   animationId;
   score = 0;
-  scoreEl.innerHTML = 0;
+  scoreEl.innerHTML = '0';
 }
 
 addEventListener('click', (event) => {
@@ -153,7 +153,7 @@ buttonEl.addEventListener('click', () => {
     scale: 0.8,
     duration: 0.2,
     ease: 'expo.in',
-    oncomplete: () => {
+    onComplete: () => {
       modalEl.style.display = 'none';
     },
   });
@@ -168,7 +168,7 @@ startButtonEl.addEventListener('click', () => {
     scale: 0.8,
     duration: 0.2,
     ease: 'expo.in',
-    oncomplete: () => {
+    onComplete: () => {
       startModalEl.style.display = 'none';
     },
   });
