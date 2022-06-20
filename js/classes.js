@@ -8,7 +8,7 @@ class Player {
       x: 0,
       y: 0,
     };
-    this.powerUp
+    this.powerUp;
   }
 
   draw() {
@@ -167,6 +167,25 @@ class Particle {
   }
 }
 
+class BackgroundParticle {
+  constructor({position, radius = 3, color = 'blue'}) {
+    this.position = position;
+    this.radius = radius;
+    this.color = color;
+    this.alpha = 0.1;
+  }
+
+  draw() {
+    context.save();
+    context.globalAlpha = this.alpha;
+    context.beginPath();
+    context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    context.fillStyle = this.color;
+    context.fill();
+    context.restore();
+  }
+}
+
 /*const powerUp = new PowerUp({y: 100, x: 100, velocity: {x: 0, y: 0}})*/
 class PowerUp {
   constructor({position = {x: 0, y: 0}, velocity}) {
@@ -180,7 +199,7 @@ class PowerUp {
       duration: 0.2,
       repeat: -1,
       yoyo: true,
-      ease: 'linear'
+      ease: 'linear',
     });
     this.radians = 0;
   }
@@ -200,6 +219,6 @@ class PowerUp {
   update() {
     this.draw();
     this.radians += 0.01;
-    this.position.x += this.velocity.x
+    this.position.x += this.velocity.x;
   }
 }

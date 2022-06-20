@@ -17,6 +17,7 @@ let animationId;
 let score = 0;
 let powerUps = [];
 let frames = 0;
+let backgroundParticles;
 let enemies = [];
 const scoreEl = document.querySelector('#scoreEl');
 const modalEl = document.querySelector('#modalEl');
@@ -80,7 +81,7 @@ function createScoreLabel({position, score}) {
     y: -30,
     duration: 0.75,
     onComplete: () => {
-      scoreLabel.parentNode.removeChild(scoreLabel)
+      scoreLabel.parentNode.removeChild(scoreLabel);
     },
   });
 }
@@ -90,6 +91,25 @@ function animate() {
   context.fillStyle = 'rgba(0, 0, 0, 0.1)';
   context.fillRect(0, 0, canvas.width, canvas.height);
   frames++;
+
+  backgroundParticles.forEach(backgroundParticle => {
+    backgroundParticle.draw();
+
+    const distance = Math.hypot(player.x - backgroundParticle.position.x,
+      player.y - backgroundParticle.position.y);
+
+    if (distance < 100) {
+      backgroundParticle.alpha = 0;
+
+      if (distance > 70) {
+        backgroundParticle.alpha = 0.5;
+      }
+    } else if (distance > 100 && backgroundParticle.alpha < 0.1) {
+      backgroundParticle.alpha += 0.01;
+    } else if (distance > 100 && backgroundParticle.alpha > 0.1) {
+      backgroundParticle.alpha -= 0.01;
+    }
+  });
 
   player.update();
 
@@ -205,7 +225,7 @@ function animate() {
               x: projectile.x,
               y: projectile.y,
             },
-            score: 100
+            score: 100,
           });
           projectiles.splice(projectileIndex, 1);
         } else {
@@ -217,7 +237,19 @@ function animate() {
               x: projectile.x,
               y: projectile.y,
             },
-            score: 150
+            score: 150,
+          });
+          //change background particle colors
+          backgroundParticles.forEach(backgroundParticle => {
+            gsap.set(backgroundParticle, {
+              color: 'white',
+              alpha: 1,
+            });
+            gsap.to(backgroundParticle, {
+              color: enemy.color,
+              alpha: 0.1,
+            });
+            /*backgroundParticle.color = enemy.color;*/
           });
           enemies.splice(index, 1);
           projectiles.splice(projectileIndex, 1);
@@ -237,6 +269,21 @@ function init() {
   score = 0;
   scoreEl.innerHTML = '0';
   frames = 0;
+  backgroundParticles = [];
+
+  const spacing = 30;
+
+  for (let x = 0; x < canvas.width + spacing; x += spacing) {
+    for (let y = 0; y < canvas.height + spacing; y += spacing) {
+      backgroundParticles.push(new BackgroundParticle({
+        position: {
+          x,
+          y,
+        },
+        radius: 3,
+      }));
+    }
+  }
 }
 
 addEventListener('click', (event) => {
