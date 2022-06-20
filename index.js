@@ -1,43 +1,114 @@
-class Projectile {
-  constructor(x, y, radius, color, velocity) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.color = color;
-    this.velocity = velocity;
-  }
+'use strict';
 
-  draw() {
-    context.beginPath();
-    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    context.fillStyle = this.color;
-    context.fill();
-  }
+const canvas = document.querySelector('canvas');
+const context = canvas.getContext('2d');
 
-  update() {
-    this.draw();
-    this.x = this.x + this.velocity.x;
-    this.y = this.y + this.velocity.y;
-  }
-}
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
+const x = canvas.width / 2;
+const y = canvas.height / 2;
+
+let player = new Player(x, y, 10, 'white');
+let particles = [];
 let projectiles = [];
 let intervalId;
 let animationId;
+let score = 0;
+let powerUps = [];
+let frames = 0;
+let enemies = [];
 const scoreEl = document.querySelector('#scoreEl');
 const modalEl = document.querySelector('#modalEl');
 const modalScoreEl = document.querySelector('#modalScoreEl');
 const buttonEl = document.querySelector('#buttonEl');
 const startButtonEl = document.querySelector('#startButtonEl');
 const startModalEl = document.querySelector('#startModalEl');
-let score = 0;
+
+function spawnEnemies() {
+  intervalId = setInterval(() => {
+    const radius = Math.random() * (30 - 4) + 4;
+    let x;
+    let y;
+
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+      y = Math.random() * canvas.height;
+    } else {
+      x = Math.random() * canvas.width;
+      y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+    }
+
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+    const angle = Math.atan2(canvas.height / 2 - y,
+      canvas.width / 2 - x);
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    };
+    enemies.push(new Enemy(x, y, radius, color, velocity));
+  }, 1000);
+}
+
+function spawnPowerUps() {
+  let spawnPowerUpsId = setInterval(() => {
+    powerUps.push(new PowerUp({
+      position: {
+        x: -30,
+        y: Math.random() * canvas.height,
+      },
+      velocity: {
+        x: Math.random() + 3,
+        y: 0,
+      },
+    }));
+  }, 10000);
+}
 
 function animate() {
   animationId = requestAnimationFrame(animate);
   context.fillStyle = 'rgba(0, 0, 0, 0.1)';
   context.fillRect(0, 0, canvas.width, canvas.height);
+  frames++;
 
   player.update();
+
+  for (let i = powerUps.length - 1; i >= 0; i--) {
+    const powerUp = powerUps[i];
+
+    if (powerUp.position.x > canvas.width) {
+      powerUps.splice(i, 1);
+    } else powerUp.update();
+
+    const distance = Math.hypot(player.x - powerUp.position.x,
+      player.y - powerUp.position.y);
+
+    // gain power up
+    if (distance < powerUp.image.height / 2 + player.radius) {
+      powerUps.splice(i, 1);
+      player.powerUp = 'MachineGun';
+      player.color = 'yellow';
+
+      // power up runs out
+      setTimeout(() => {
+        player.powerUp = null;
+        player.color = 'white';
+      }, 5000);
+    }
+  }
+  // machine gun animation / implementation
+  if (player.powerUp === 'MachineGun') {
+    const angle = Math.atan2(mouse.position.y - player.y,
+      mouse.position.x - player.x);
+    const velocity = {
+      x: Math.cos(angle) * 5, y: Math.sin(angle) * 5,
+    };
+
+    if (frames % 2 === 0)
+      projectiles.push(
+        new Projectile(player.x, player.y, 5, 'yellow', velocity));
+  }
+
   for (let index = particles.length - 1; index >= 0; index--) {
     const particle = particles[index];
     if (particle.alpha <= 0) {
@@ -127,9 +198,11 @@ function init() {
   projectiles = [];
   enemies = [];
   particles = [];
+  powerUps = [];
   animationId;
   score = 0;
   scoreEl.innerHTML = '0';
+  frames = 0;
 }
 
 addEventListener('click', (event) => {
@@ -143,11 +216,23 @@ addEventListener('click', (event) => {
     new Projectile(player.x, player.y, 5, 'white', velocity));
 });
 
+const mouse = {
+  position: {
+    x: 0,
+    y: 0,
+  },
+};
+addEventListener('mousemove', (event) => {
+  mouse.position.x = event.clientX;
+  mouse.position.y = event.clientY;
+});
+
 // restart game
 buttonEl.addEventListener('click', () => {
   init();
   animate();
   spawnEnemies();
+  spawnPowerUps();
   gsap.to('#modalEl', {
     opacity: 0,
     scale: 0.8,
@@ -163,6 +248,7 @@ startButtonEl.addEventListener('click', () => {
   init();
   animate();
   spawnEnemies();
+  spawnPowerUps();
   gsap.to('#startModalEl', {
     opacity: 0,
     scale: 0.8,
@@ -192,4 +278,4 @@ window.addEventListener('keydown', (event) => {
       player.velocity.y += 1;
       break;
   }
-})
+});
