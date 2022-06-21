@@ -6,10 +6,7 @@ const context = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const x = canvas.width / 2;
-const y = canvas.height / 2;
-
-let player = new Player(x, y, 10, 'white');
+let player;
 let particles = [];
 let projectiles = [];
 let intervalId;
@@ -275,6 +272,8 @@ function animate() {
 }
 
 function init() {
+  const x = canvas.width / 2;
+  const y = canvas.height / 2;
   player = new Player(x, y, 10, 'white');
   projectiles = [];
   enemies = [];
@@ -384,14 +383,21 @@ volumeUpEl.addEventListener('click', () => {
 // unmute everything
 volumeOffEl.addEventListener('click', () => {
   if (audioInitialized)
-  audio.background.play();
+    audio.background.play();
   volumeOffEl.style.display = 'none';
   volumeUpEl.style.display = 'block';
 
   for (let key in audio) {
     audio[key].mute(false);
   }
-})
+});
+
+window.addEventListener('resize', () => {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+
+  init();
+});
 
 window.addEventListener('keydown', (event) => {
   switch (event.key) {
