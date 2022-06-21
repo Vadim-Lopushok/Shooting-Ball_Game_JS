@@ -168,7 +168,7 @@ class Particle {
 }
 
 class BackgroundParticle {
-  constructor({position, radius = 3, color = 'blue'}) {
+  constructor({position, radius = 2, color = 'blue'}) {
     this.position = position;
     this.radius = radius;
     this.color = color;
@@ -186,7 +186,6 @@ class BackgroundParticle {
   }
 }
 
-/*const powerUp = new PowerUp({y: 100, x: 100, velocity: {x: 0, y: 0}})*/
 class PowerUp {
   constructor({position = {x: 0, y: 0}, velocity}) {
     this.position = position;
