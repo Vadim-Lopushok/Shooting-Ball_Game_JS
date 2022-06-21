@@ -168,7 +168,7 @@ class Particle {
 }
 
 class BackgroundParticle {
-  constructor({position, radius = 2, color = 'blue'}) {
+  constructor({position, radius = 2, color = `hsl(${Math.random() * 360}, 50%, 50%)`}) {
     this.position = position;
     this.radius = radius;
     this.color = color;

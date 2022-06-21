@@ -53,7 +53,7 @@ function init() {
           x,
           y,
         },
-        radius: 3,
+        radius: 2,
       }));
     }
   }
